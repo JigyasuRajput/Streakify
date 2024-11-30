@@ -3,15 +3,18 @@ import toast from 'react-hot-toast';
 
 export async function fetchLeetCodeSubmissions(username: string): Promise<PlatformSubmission[]> {
   try {
-    // First try the leetcode-stats-api
+    // Step 1: Fetch user stats from leetcode-stats-api
     const statsResponse = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
+    if (!statsResponse.ok) {
+      throw new Error(`Failed to fetch leetcode-stats-api for user: ${username}`);
+    }
     const statsData = await statsResponse.json();
-    
+
     if (statsData.status === 'error' || !statsData.totalSolved) {
-      throw new Error('Failed to fetch from leetcode-stats-api');
+      throw new Error('Invalid stats data from leetcode-stats-api');
     }
 
-    // Then fetch the submission calendar from LeetCode's GraphQL API
+    // Step 2: Fetch submission calendar from LeetCode GraphQL API
     const graphqlResponse = await fetch('https://leetcode.com/graphql', {
       method: 'POST',
       headers: {
@@ -29,29 +32,38 @@ export async function fetchLeetCodeSubmissions(username: string): Promise<Platfo
             }
           }
         `,
-        variables: { username }
-      })
+        variables: { username },
+      }),
     });
 
+    if (!graphqlResponse.ok) {
+      throw new Error(`Failed to fetch LeetCode GraphQL API for user: ${username}`);
+    }
     const graphqlData = await graphqlResponse.json();
-    
-    if (!graphqlData.data?.matchedUser?.userCalendar?.submissionCalendar) {
-      throw new Error('No submission data found');
+
+    const submissionCalendar = graphqlData.data?.matchedUser?.userCalendar?.submissionCalendar;
+    if (!submissionCalendar) {
+      throw new Error('No submission data found in GraphQL response');
     }
 
-    const calendar = JSON.parse(graphqlData.data.matchedUser.userCalendar.submissionCalendar);
-    
+    // Parse and return submissions
+    const calendar = JSON.parse(submissionCalendar);
     return Object.entries(calendar).map(([timestamp, count]) => ({
-      date: new Date(parseInt(timestamp) * 1000).toISOString().split('T')[0],
+      date: new Date(parseInt(timestamp) * 1000).toISOString().split('T')[0], // Convert timestamp to date
       count: typeof count === 'number' ? count : 0,
-      platform: 'leetcode'
+      platform: 'leetcode',
     }));
   } catch (error) {
-    console.error('Error fetching LeetCode submissions:', error);
-    toast.error(`Failed to fetch LeetCode data for user: ${username}`);
-    return [];
+    if (error instanceof Error) {
+      console.error('Error fetching LeetCode submissions:', error.message);
+    } else {
+      console.error('Error fetching LeetCode submissions:', error);
+    }
+    // Re-throw error to let the caller handle UI notifications or further actions
+    throw new Error(`Failed to fetch LeetCode data for user: ${username}`);
   }
 }
+
 
 export async function fetchCodeForcesSubmissions(handle: string): Promise<PlatformSubmission[]> {
   try {
