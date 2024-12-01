@@ -134,6 +134,8 @@ The extension fetches data from **Codeforces** and **Leetcode** using their APIs
 
 ## Screenshots
 
+Go to assests folder if images are not showing
+
 ![UI Screenshot](./assets/UI_screenshot.PNG)
 _User Interface to add coding profiles._
 
