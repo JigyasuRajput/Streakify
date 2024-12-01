@@ -99,3 +99,4 @@ export async function fetchCodeForcesSubmissions(handle: string): Promise<Platfo
     return [];
   }
 }
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,11 +7,11 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { format, getDaysInMonth } from 'date-fns';
-import { PlatformSubmission } from '../types/submission';
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import { format, getDaysInMonth } from "date-fns";
+import { PlatformSubmission } from "../types/submission";
 
 ChartJS.register(
   CategoryScale,
@@ -37,9 +37,12 @@ const SubmissionGraph: React.FC<SubmissionGraphProps> = ({ submissions }) => {
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const submissionsByDate = new Map<number, number>();
-  submissions.forEach(sub => {
+  submissions.forEach((sub) => {
     const date = new Date(sub.date);
-    if (date.getFullYear() === selectedYear && date.getMonth() === selectedMonth) {
+    if (
+      date.getFullYear() === selectedYear &&
+      date.getMonth() === selectedMonth
+    ) {
       const day = date.getDate();
       submissionsByDate.set(day, (submissionsByDate.get(day) || 0) + sub.count);
     }
@@ -49,14 +52,17 @@ const SubmissionGraph: React.FC<SubmissionGraphProps> = ({ submissions }) => {
     labels: days,
     datasets: [
       {
-        label: 'Problems Solved',
-        data: days.map(day => submissionsByDate.get(day) || 0),
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.5)',
+        label: "Problems Solved",
+        data: days.map((day) => submissionsByDate.get(day) || 0),
+        borderColor: "rgb(34, 197, 94)",
+        backgroundColor: "rgba(34, 197, 94, 0.5)",
         tension: 0.4,
       },
     ],
   };
+
+  console.log("SubmissionGraph submissions:", submissions);
+  console.log("Submissions by date:", submissionsByDate);
 
   const options = {
     responsive: true,
@@ -67,11 +73,14 @@ const SubmissionGraph: React.FC<SubmissionGraphProps> = ({ submissions }) => {
       },
       title: {
         display: true,
-        text: `Problems Solved - ${format(new Date(selectedYear, selectedMonth), 'MMMM yyyy')}`,
-        color: 'white',
+        text: `Problems Solved - ${format(
+          new Date(selectedYear, selectedMonth),
+          "MMMM yyyy"
+        )}`,
+        color: "white",
         font: {
           size: 16,
-          weight: 'bold',
+          weight: "bold" as "bold",
         },
       },
     },
@@ -79,24 +88,24 @@ const SubmissionGraph: React.FC<SubmissionGraphProps> = ({ submissions }) => {
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'white',
+          color: "white",
           font: {
             size: 12,
           },
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)',
+          color: "rgba(255, 255, 255, 0.1)",
         },
       },
       x: {
         ticks: {
-          color: 'white',
+          color: "white",
           font: {
             size: 12,
           },
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)',
+          color: "rgba(255, 255, 255, 0.1)",
         },
       },
     },
@@ -112,7 +121,7 @@ const SubmissionGraph: React.FC<SubmissionGraphProps> = ({ submissions }) => {
         >
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i} value={i}>
-              {format(new Date(2000, i), 'MMMM')}
+              {format(new Date(2000, i), "MMMM")}
             </option>
           ))}
         </select>

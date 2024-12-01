@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Activity } from 'lucide-react';
-import { Toaster } from 'react-hot-toast';
-import ProfileSetup from './components/ProfileSetup';
-import Heatmap from './components/Heatmap';
-import HeatmapLegend from './components/HeatmapLegend';
-import SubmissionGraph from './components/SubmissionGraph';
-import { fetchLeetCodeSubmissions, fetchCodeForcesSubmissions } from './services/api';
-import { PlatformSubmission } from './types/submission';
-import { UserProfile } from './types/user';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { useState, useEffect } from "react";
+import { Activity } from "lucide-react";
+import { Toaster } from "react-hot-toast";
+import ProfileSetup from "./components/ProfileSetup";
+import Heatmap from "./components/Heatmap";
+import HeatmapLegend from "./components/HeatmapLegend";
+import SubmissionGraph from "./components/SubmissionGraph";
+import {
+  fetchLeetCodeSubmissions,
+  fetchCodeForcesSubmissions,
+} from "./services/api";
+import { PlatformSubmission } from "./types/submission";
+import { UserProfile } from "./types/user";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 function App() {
-  const [profile, setProfile] = useLocalStorage<UserProfile | null>('userProfile', null);
+  const [profile, setProfile] = useLocalStorage<UserProfile | null>(
+    "userProfile",
+    null
+  );
   const [submissions, setSubmissions] = useState<PlatformSubmission[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +30,8 @@ function App() {
 
   const fetchData = async () => {
     if (!profile) return;
-    
+
+    console.log("Fetching data for profile:", profile);
     setLoading(true);
     setError(null);
     try {
@@ -35,15 +42,23 @@ function App() {
       if (profile.codeforcesHandle) {
         promises.push(fetchCodeForcesSubmissions(profile.codeforcesHandle));
       }
-      // Add other platform API calls here
-      
+
       const results = await Promise.all(promises);
-      const combinedSubmissions = results.flat().sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-      );
+      const combinedSubmissions = results
+        .flat()
+        .sort(
+          (a: PlatformSubmission, b: PlatformSubmission) =>
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+      console.log("Combined submissions:", combinedSubmissions);
       setSubmissions(combinedSubmissions);
     } catch (err) {
-      setError('Failed to fetch submission data');
+      console.error("Error fetching submission data:", err);
+      if (err instanceof Error) {
+        setError(err.message || "Failed to fetch submission data");
+      } else {
+        setError("Failed to fetch submission data");
+      }
     } finally {
       setLoading(false);
     }
