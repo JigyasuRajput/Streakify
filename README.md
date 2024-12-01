@@ -31,7 +31,7 @@ This extension is built using **Vite** (for fast development), **React** (for th
 Start by cloning the project repository to your local machine:
 
 ```bash
-git clone https://github.com/jigyasu_rajput/streakify.git
+git clone https://github.com/JigyasuRajput/streakify.git
 cd streakify
 ```
 
