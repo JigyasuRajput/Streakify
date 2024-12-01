@@ -5,7 +5,8 @@
   "description": "Track your coding streaks across multiple platforms",
   "permissions": [
     "storage",
-    "identity"
+    "identity",
+    "windows"
   ],
   "host_permissions": [
     "https://leetcode.com/",
