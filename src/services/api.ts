@@ -16,9 +16,12 @@ export async function fetchLeetCodeSubmissions(username: string): Promise<Platfo
     // Step 1: Fetch user stats from leetcode-stats-api
     const statsResponse = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
     if (!statsResponse.ok) {
+      console.error(`LeetCode stats API response status: ${statsResponse.status}`);
       throw new Error(`Failed to fetch leetcode-stats-api for user: ${username}`);
     }
-    const statsData = await statsResponse.json();
+    const statsData = await statsResponse.json().catch(() => {
+      throw new Error('Failed to parse JSON from leetcode-stats-api');
+    });
 
     if (statsData.status === 'error' || !statsData.totalSolved) {
       throw new Error('Invalid stats data from leetcode-stats-api');
@@ -47,9 +50,12 @@ export async function fetchLeetCodeSubmissions(username: string): Promise<Platfo
     });
 
     if (!graphqlResponse.ok) {
+      console.error(`LeetCode GraphQL API response status: ${graphqlResponse.status}`);
       throw new Error(`Failed to fetch LeetCode GraphQL API for user: ${username}`);
     }
-    const graphqlData = await graphqlResponse.json();
+    const graphqlData = await graphqlResponse.json().catch(() => {
+      throw new Error('Failed to parse JSON from LeetCode GraphQL API');
+    });
 
     const submissionCalendar = graphqlData.data?.matchedUser?.userCalendar?.submissionCalendar;
     if (!submissionCalendar) {
@@ -73,8 +79,10 @@ export async function fetchLeetCodeSubmissions(username: string): Promise<Platfo
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error fetching LeetCode submissions:', error.message);
+      toast.error(`Failed to fetch LeetCode data for user: ${username}: ${error.message}`);
     } else {
       console.error('Error fetching LeetCode submissions:', error);
+      toast.error(`Failed to fetch LeetCode data for user: ${username}`);
     }
     // Re-throw error to let the caller handle UI notifications or further actions
     throw new Error(`Failed to fetch LeetCode data for user: ${username}`);
