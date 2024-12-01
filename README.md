@@ -134,13 +134,13 @@ The extension fetches data from **Codeforces** and **Leetcode** using their APIs
 
 ## Screenshots
 
-![UI Screenshot](./assets/UI_screenshot.png)
+![UI Screenshot](./assets/UI_screenshot.PNG)
 _User Interface to add coding profiles._
 
-![Heatmap Screenshot](./assets/heatmap_screenshot.png)
+![Heatmap Screenshot](./assets/heatmap_screenshot.PNG)
 _Example of the heatmap displaying user coding activity._
 
-![Graph Screenshot](./assets/graph_screenshot.png)
+![Graph Screenshot](./assets/graph_screenshot.PNG)
 _Example of the interactive graph showing monthly coding streaks._
 
 ---
