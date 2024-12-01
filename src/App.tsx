@@ -109,15 +109,11 @@ function App() {
         ) : (
           <div className="space-y-6">
             <div className="overflow-x-auto">
-              <div className="min-w-[800px]">
-                <Heatmap submissions={submissions} />
-                <HeatmapLegend />
-              </div>
+              <Heatmap submissions={submissions} />
+              <HeatmapLegend />
             </div>
             <div className="overflow-x-auto">
-              <div className="min-w-[800px]">
-                <SubmissionGraph submissions={submissions} />
-              </div>
+              <SubmissionGraph submissions={submissions} />
             </div>
           </div>
         )}

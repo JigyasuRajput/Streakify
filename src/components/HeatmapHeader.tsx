@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface HeatmapHeaderProps {
   year: number;
@@ -16,7 +16,7 @@ const HeatmapHeader: React.FC<HeatmapHeaderProps> = ({
 }) => {
   return (
     <div className="flex justify-between items-center mb-4">
-      <div className="text-sm text-gray-400">
+      <div className="text-sm text-gray-400 px-4 py-2">
         {totalSubmissions} problems solved in {year}
       </div>
       <div className="flex items-center gap-2">

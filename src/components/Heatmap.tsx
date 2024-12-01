@@ -31,24 +31,28 @@ const Heatmap: React.FC<HeatmapProps> = ({ submissions }) => {
   console.log("Year submissions:", yearSubmissions);
 
   return (
-    <div className="p-4 bg-gray-900 rounded-lg shadow-lg">
+    <div className="bg-gray-900 rounded-lg shadow-lg overflow-x-auto">
       <HeatmapHeader
         year={selectedYear}
         totalSubmissions={totalSubmissions}
         onYearChange={setSelectedYear}
         currentYear={currentYear}
       />
-      <div className="flex gap-3 overflow-x-auto">
+      <div className="flex p-4 space-x-2">
         <WeekdayLabels />
-        <div className="flex-1 min-w-0">
+        <div className="flex-1">
           <MonthLabels weeks={weeks} />
-          <div className="grid grid-rows-7 grid-flow-col gap-1">
-            {dates.map((date) => (
-              <HeatmapCell
-                key={date.toISOString()}
-                date={date}
-                count={getDayCount(submissions, date)}
-              />
+          <div className="grid grid-flow-col auto-cols-max gap-1">
+            {weeks.map((week, weekIndex) => (
+              <div key={weekIndex} className="grid grid-rows-7 gap-1">
+                {week.map((date) => (
+                  <HeatmapCell
+                    key={date.toISOString()}
+                    date={date}
+                    count={getDayCount(submissions, date)}
+                  />
+                ))}
+              </div>
             ))}
           </div>
         </div>
@@ -56,5 +60,4 @@ const Heatmap: React.FC<HeatmapProps> = ({ submissions }) => {
     </div>
   );
 };
-
 export default Heatmap;
