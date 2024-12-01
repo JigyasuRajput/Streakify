@@ -1,8 +1,18 @@
 import { PlatformSubmission } from '../types/submission';
 import toast from 'react-hot-toast';
 
+declare const chrome: any;
+
 export async function fetchLeetCodeSubmissions(username: string): Promise<PlatformSubmission[]> {
   try {
+    // Check if chrome storage is available
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      const storedData = await chrome.storage.local.get([`leetcode_${username}`]);
+      if (storedData[`leetcode_${username}`]) {
+        return storedData[`leetcode_${username}`];
+      }
+    }
+
     // Step 1: Fetch user stats from leetcode-stats-api
     const statsResponse = await fetch(`https://leetcode-stats-api.herokuapp.com/${username}`);
     if (!statsResponse.ok) {
@@ -48,11 +58,18 @@ export async function fetchLeetCodeSubmissions(username: string): Promise<Platfo
 
     // Parse and return submissions
     const calendar = JSON.parse(submissionCalendar);
-    return Object.entries(calendar).map(([timestamp, count]) => ({
+    const submissions = Object.entries(calendar).map(([timestamp, count]) => ({
       date: new Date(parseInt(timestamp) * 1000).toISOString().split('T')[0], // Convert timestamp to date
       count: typeof count === 'number' ? count : 0,
       platform: 'leetcode',
     }));
+
+    // Store data in chrome storage if available
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ [`leetcode_${username}`]: submissions });
+    }
+
+    return submissions;
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error fetching LeetCode submissions:', error.message);
